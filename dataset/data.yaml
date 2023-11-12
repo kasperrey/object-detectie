@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 3
+names: ['dammen', 'pentago', 'schaak']
+
+roboflow:
+  workspace: kasper-reynders-tuebj
+  project: spelletjes
+  version: 5
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/kasper-reynders-tuebj/spelletjes/dataset/5
