@@ -1,6 +1,5 @@
 import cv2
 import os
-
 from pybboxes import BoundingBox
 
 
@@ -16,6 +15,7 @@ class Start:
         for file in os.listdir("add_to_dataset"):
             if not file[len(file)-3:] == "txt":
                 lijst_images.append((self.resize(cv2.imread("add_to_dataset/"+file)), "add_to_dataset/"+file))
+                print()
                 if os.path.exists("add_to_dataset/"+file[:len(file)-4]+".txt"):
                     lijst_labels.append((self.verander_yolo_in_co(self.resize(cv2.imread("add_to_dataset/"+file)), "add_to_dataset/"+file[:len(file)-4]+".txt"),
                                          "add_to_dataset/"+file[:len(file)-4]+".txt"))
@@ -73,7 +73,7 @@ class Scherm:
 
     def loop(self):
         while True:
-            gewacht = cv2.waitKey(1) & 0xFF
+            gewacht = cv2.waitKey(1)
             if self.end_pos:
                 if gewacht == ord("d"):
                     self.aangepast_image = self.image.copy()
@@ -88,32 +88,53 @@ class Scherm:
                                     (self.start_pos[0], self.start_pos[1]-5),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.start.labels[key][1])
                         cv2.imshow("Display", self.aangepast_image)
-                        self.labels.append((self.start_pos, self.end_pos, key))
+                        self.labels.append((self.start_pos, self.end_pos, key, self.start.lijst_fotos[self.plus][1]))
                         self.image = self.aangepast_image.copy()
                         self.start_pos = None
                         self.end_pos = None
-            if gewacht & 0xFF == ord("q"):
+            if gewacht == ord("q"):
                 break
-            elif gewacht & 0xFF == ord("s"):
+            elif gewacht == ord("s"):
                 lijst = []
+                files = []
                 for label in self.labels:
-                    yolo = self.start.verander_co_in_yolo(self.image, label[0][0], label[0][1], label[1][0], label[1][1])
-                    lijst.append(f"{label[2]} {yolo[0]} {yolo[1]} {yolo[2]} {yolo[3]}")
-                f = open(self.start.lijst_fotos[self.plus][1][:len(self.start.lijst_fotos[0][1])-4]+".txt", "w+")
-                for text in lijst:
-                    f.write(text+"\n")
-                f.close()
+                    for image in self.start.lijst_fotos:
+                        if image[1] == label[3]:
+                            yolo = self.start.verander_co_in_yolo(image[0], label[0][0], label[0][1], label[1][0], label[1][1])
+                            lijst.append((f"{label[2]} {yolo[0]} {yolo[1]} {yolo[2]} {yolo[3]}", label[3]))
+                for foto in self.start.lijst_fotos:
+                    files.append(open(foto[1][:len(foto[1])-4]+".txt", "w+"))
+                for file in files:
+                    for text in lijst:
+                        if text[1][:len(text[1])-4]+".txt" == file.name:
+                            file.write(text[0]+"\n")
+                    file.close()
                 break
+            elif gewacht == ord("v"):
+                self.plus += 1
+                if len(self.start.lijst_fotos) <= self.plus:
+                    self.plus = 0
+                self.image = self.start.lijst_fotos[self.plus][0].copy()
+                for label in self.labels:
+                    if label[3] == self.start.lijst_fotos[self.plus][1]:
+                        cv2.rectangle(self.image, label[0], label[1], self.start.labels[label[2]][1])
+                        cv2.putText(self.image, self.start.labels[str(label[2])][0],
+                                        (label[0][0], label[0][1] - 5),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.start.labels[str(label[2])][1])
+                self.aangepast_image = self.image.copy()
+                cv2.imshow("Display", self.image)
 
     def add_loaded_labels(self):
         for label in self.start.lijst_labels:
-            if label[1][:len(label[1])-4] == self.start.lijst_fotos[self.plus][1][:len(self.start.lijst_fotos[self.plus][1])-4]:
-                for coord in label[0]:
-                    cv2.rectangle(self.image, (coord[0][0], coord[0][1]), (coord[0][2], coord[0][3]), self.start.labels[str(coord[1])][1])
-                    cv2.putText(self.image, self.start.labels[str(coord[1])][0],
-                                (coord[0][0], coord[0][1] - 5),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.start.labels[str(coord[1])][1])
-
+            for image in self.start.lijst_fotos:
+                if label[1][:len(label[1])-4] == image[1][:len(image[1])-4]:
+                    for coord in label[0]:
+                        self.labels.append(((coord[0][0], coord[0][1]), (coord[0][2], coord[0][3]), str(coord[1]), image[1]))
+                        if image[1] == self.start.lijst_fotos[self.plus][1]:
+                            cv2.rectangle(self.image, (coord[0][0], coord[0][1]), (coord[0][2], coord[0][3]), self.start.labels[str(coord[1])][1])
+                            cv2.putText(self.image, self.start.labels[str(coord[1])][0],
+                                        (coord[0][0], coord[0][1] - 5),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, self.start.labels[str(coord[1])][1])
 
 
 Start()
