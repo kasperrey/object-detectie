@@ -1,0 +1,10 @@
+path: ./dataset2
+train: train/images
+val: valid/images
+test:
+
+# Classes
+names:
+  0: bunny_hop
+  1: pentago
+  2: de_vergeten_stad
