@@ -6,7 +6,8 @@ from pybboxes import BoundingBox
 class Start:
     def __init__(self):
         self.lijst_fotos, self.lijst_labels = self.maak_lijst()
-        self.labels = {"0": ("dammen", (255, 0, 0)), "1": ("pentago", (0, 255, 0)), "2": ("schaak", (0, 0, 255))}
+        self.labels = {"0": ("bunny_hop", (255, 0, 0)), "1": ("pentago", (0, 255, 0)),
+                       "2": ("de_vergeten_stad", (0, 0, 255)), "3": ("wie_is_de_ezel", (255, 0, 255)), "4": ("het_magische_labyrint", (0, 255, 255))}
         Scherm(self)
 
     def maak_lijst(self):
