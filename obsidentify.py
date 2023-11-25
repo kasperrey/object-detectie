@@ -14,7 +14,8 @@ while cap.isOpened():
         annotated_frame = results[0].plot()
         for x in results[0].boxes:
             if x.conf.item() < 0.30:
-                cv2.imwrite(f"add_to_dataset/im_{x.conf.item()}.jpg", frame)
+                pass
+                # cv2.imwrite(f"add_to_dataset/im_{x.conf.item()}.jpg", frame)
         cv2.imshow("YOLOv8 Tracking", annotated_frame)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):

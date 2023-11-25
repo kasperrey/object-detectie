@@ -1,13 +1,15 @@
 import cv2
 import os
 from pybboxes import BoundingBox
+import random
+import yaml
 
 
 class Start:
     def __init__(self):
         self.lijst_fotos, self.lijst_labels = self.maak_lijst()
-        self.labels = {"0": ("bunny_hop", (255, 0, 0)), "1": ("pentago", (0, 255, 0)),
-                       "2": ("de_vergeten_stad", (0, 0, 255)), "3": ("wie_is_de_ezel", (255, 0, 255)), "4": ("het_magische_labyrint", (0, 255, 255))}
+        self.labels = {}
+        self.read_yaml()
         Scherm(self)
 
     def maak_lijst(self):
@@ -40,6 +42,14 @@ class Start:
         delen_door = max(img.shape[1], img.shape[0])/1000
         img = cv2.resize(img, (int(img.shape[1]/delen_door), int(img.shape[0]/delen_door)))
         return img
+
+    def read_yaml(self):
+        f = open('spellen2.yaml', 'r')
+        data = yaml.load(f, Loader=yaml.SafeLoader)
+        for name in data["names"]:
+            self.labels[str(name)] = (data["names"][name], (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+        f.close()
+
 
 
 class Scherm:

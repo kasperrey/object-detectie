@@ -5,7 +5,7 @@ from ultralytics import YOLO
 
 model = YOLO()
 
-r = requests.get("https://api.geekdo.com/api/images?ajax=1&gallery=all&nosession=1&objectid=41916&objecttype=thing&pageid=2&showcount=36&size=thumb&sort=hot")
+r = requests.get("https://api.geekdo.com/api/images?ajax=1&gallery=all&nosession=1&objectid=5136&objecttype=thing&pageid=1&showcount=36&size=thumb&sort=hot")
 json = r.json()
 
 for image in json["images"]:
@@ -21,6 +21,6 @@ for image in json["images"]:
     if not person:
         cv2.imwrite("dataset2/train/images/img_"+src[len(src)-10:], img)
         f = open("dataset2/train/labels/img_"+src[len(src)-10:len(src)-4]+".txt", "w")
-        f.write("4 0.5 0.5 1 1")
+        f.write("8 0.5 0.5 1 1")
         f.close()
 
